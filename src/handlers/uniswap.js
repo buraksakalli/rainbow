@@ -1,3 +1,6 @@
+import { BigNumber } from '@ethersproject/bignumber';
+import { hexlify } from '@ethersproject/bytes';
+import { Contract } from '@ethersproject/contracts';
 import { captureException } from '@sentry/react-native';
 import {
   getExecutionDetails,
@@ -11,7 +14,6 @@ import {
 } from '@uniswap/sdk';
 import { getUnixTime, sub } from 'date-fns';
 import contractMap from 'eth-contract-metadata';
-import { ethers } from 'ethers';
 import {
   findKey,
   get,
@@ -56,14 +58,16 @@ export const getTestnetUniswapPairs = network => {
   }));
 };
 
+// TODO JIN
 const convertArgsForEthers = methodArguments =>
   methodArguments.map(arg =>
-    typeof arg === 'object' ? ethers.utils.bigNumberify(arg.toFixed()) : arg
+    typeof arg === 'object' ? BigNumber.from(arg.toFixed()) : arg
   );
 
+// TODO JIN
 const convertValueForEthers = value => {
-  const valueBigNumber = ethers.utils.bigNumberify(value.toString());
-  return ethers.utils.hexlify(valueBigNumber);
+  const valueBigNumber = BigNumber.from(value.toString());
+  return hexlify(valueBigNumber);
 };
 
 export const getReserve = async tokenAddress =>
@@ -145,6 +149,7 @@ export const estimateSwapGasLimit = async (accountAddress, tradeDetails) => {
   }
 };
 
+// TODO JIN
 const getContractExecutionDetails = (tradeDetails, providerOrSigner) => {
   const slippage = convertStringToNumber(
     get(tradeDetails, 'executionRateSlippage', 0)
@@ -160,11 +165,7 @@ const getContractExecutionDetails = (tradeDetails, providerOrSigner) => {
     methodName,
     value: rawValue,
   } = executionDetails;
-  const exchange = new ethers.Contract(
-    exchangeAddress,
-    exchangeABI,
-    providerOrSigner
-  );
+  const exchange = new Contract(exchangeAddress, exchangeABI, providerOrSigner);
   const updatedMethodArgs = convertArgsForEthers(methodArguments);
   const value = convertValueForEthers(rawValue);
   return {
@@ -231,6 +232,7 @@ export const executeSwap = async (
   }
 };
 
+// TODO JIN
 export const getLiquidityInfo = async (
   accountAddress,
   exchangeContracts,
@@ -239,11 +241,7 @@ export const getLiquidityInfo = async (
   const promises = map(exchangeContracts, async exchangeAddress => {
     try {
       const ethReserveCall = web3Provider.getBalance(exchangeAddress);
-      const exchange = new ethers.Contract(
-        exchangeAddress,
-        exchangeABI,
-        web3Provider
-      );
+      const exchange = new Contract(exchangeAddress, exchangeABI, web3Provider);
       const tokenAddressCall = exchange.tokenAddress();
       const balanceCall = exchange.balanceOf(accountAddress);
       const totalSupplyCall = exchange.totalSupply();
@@ -260,11 +258,7 @@ export const getLiquidityInfo = async (
         totalSupplyCall,
       ]);
 
-      const tokenContract = new ethers.Contract(
-        tokenAddress,
-        erc20ABI,
-        web3Provider
-      );
+      const tokenContract = new Contract(tokenAddress, erc20ABI, web3Provider);
 
       const token = get(pairs, `[${toLower(tokenAddress)}]`);
 
