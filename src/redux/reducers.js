@@ -10,6 +10,7 @@ import explorer from './explorer';
 import gas from './gas';
 import imageMetadata from './imageMetadata';
 import keyboardHeight from './keyboardHeight';
+import multicall from './multicall';
 import nonce from './nonce';
 import openStateSettings from './openStateSettings';
 import raps from './raps';
@@ -33,6 +34,7 @@ export default combineReducers({
   gas,
   imageMetadata,
   keyboardHeight,
+  multicall,
   nonce,
   openStateSettings,
   raps,
