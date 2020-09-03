@@ -87,7 +87,6 @@ export default function ExchangeModal({
     updateTxFee,
   } = useGas();
   const {
-    clearUniswapCurrenciesAndReserves,
     inputReserve,
     outputReserve,
   } = useUniswapCurrencyReserves();
@@ -232,12 +231,10 @@ export default function ExchangeModal({
     startPollingGasPrices();
     initWeb3Listener();
     return () => {
-      clearUniswapCurrenciesAndReserves();
       stopPollingGasPrices();
       stopWeb3Listener();
     };
   }, [
-    clearUniswapCurrenciesAndReserves,
     initWeb3Listener,
     isDeposit,
     isWithdrawal,
