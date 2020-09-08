@@ -40,6 +40,7 @@ import {
   useSwapInputs,
   useUniswapCurrencies,
   useUniswapMarketDetails,
+  useUniswapPairs,
 } from '@rainbow-me/hooks';
 import Routes from '@rainbow-me/routes';
 import { colors, position } from '@rainbow-me/styles';
@@ -117,6 +118,8 @@ export default function ExchangeModal({
     underlyingPrice,
   });
 
+  const { allPairs: pairs } = useUniswapPairs(inputCurrency, outputCurrency);
+
   const {
     handleFocus,
     inputFieldRef,
@@ -156,6 +159,7 @@ export default function ExchangeModal({
         inputCurrency,
         outputAmount,
         outputCurrency,
+        pairs,
       });
       if (inputCurrency && outputCurrency) {
         updateTxFee(gasLimit);
@@ -170,6 +174,7 @@ export default function ExchangeModal({
     inputCurrency,
     outputAmount,
     outputCurrency,
+    pairs,
     updateTxFee,
   ]);
 
@@ -377,6 +382,7 @@ export default function ExchangeModal({
           isMax,
           outputAmount,
           outputCurrency,
+          pairs,
           selectedGasPrice: null,
         });
         logger.log('[exchange - handle submit] rap', rap);
@@ -413,6 +419,7 @@ export default function ExchangeModal({
     navigate,
     outputAmount,
     outputCurrency,
+    pairs,
     setParams,
     slippage,
     type,
