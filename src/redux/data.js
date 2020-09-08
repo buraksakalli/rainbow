@@ -49,7 +49,7 @@ import { ethereumUtils, isLowerCaseMatch } from '../utils';
 import { addCashUpdatePurchases } from './addCash';
 /* eslint-disable-next-line import/no-cycle */
 import { uniqueTokensRefreshState } from './uniqueTokens';
-import { uniswapUpdateLiquidityTokens } from './uniswap';
+import { uniswapUpdateLiquidityTokens } from './uniswapLiquidity';
 import logger from 'logger';
 
 let pendingTransactionsHandle = null;
