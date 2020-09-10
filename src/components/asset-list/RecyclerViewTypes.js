@@ -15,6 +15,7 @@ import {
   UniswapInvestmentCard,
 } from '../investment-cards';
 import { ListFooter } from '../list';
+import PoolsListWrapper from '../pools/PoolsListWrapper';
 import SavingsListWrapper from '../savings/SavingsListWrapper';
 import { TokenFamilyHeaderHeight } from '../token-family';
 import { UniqueTokenRow } from '../unique-token';
@@ -103,15 +104,35 @@ export const ViewTypes = {
   },
 
   COIN_SAVINGS: {
-    calculateHeight: ({ isOpen, amountOfRows }) =>
+    calculateHeight: ({ isLast, isOpen, amountOfRows }) =>
       isOpen
-        ? TokenFamilyHeaderHeight + ListFooter.height + 61 * amountOfRows - 4
-        : TokenFamilyHeaderHeight + ListFooter.height - 10,
+        ? TokenFamilyHeaderHeight +
+          (isLast ? ListFooter.height : 8) +
+          61 * amountOfRows -
+          4
+        : TokenFamilyHeaderHeight + (isLast ? ListFooter.height : 8) - 10,
     index: 4,
     renderComponent: ({ data }) => {
       const { item = {} } = data;
       return (
         <SavingsListWrapper assets={item.assets} totalValue={item.totalValue} />
+      );
+    },
+  },
+
+  COIN_POOLS: {
+    calculateHeight: ({ isOpen, amountOfRows }) =>
+      isOpen
+        ? TokenFamilyHeaderHeight +
+          ListFooter.height +
+          CoinRowHeight * amountOfRows -
+          4
+        : TokenFamilyHeaderHeight + ListFooter.height - 10,
+    index: 8,
+    renderComponent: ({ data }) => {
+      const { item = {} } = data;
+      return (
+        <PoolsListWrapper assets={item.assets} totalValue={item.totalValue} />
       );
     },
   },

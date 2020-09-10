@@ -271,7 +271,10 @@ class RecyclerAssetList extends Component {
           );
           const lastBalanceIndex =
             headersIndices[balancesIndex] + balanceItemsCount;
-          if (index === lastBalanceIndex - 2) {
+          if (
+            index === lastBalanceIndex - 3 ||
+            index === lastBalanceIndex - 2
+          ) {
             if (this.coinDividerIndex !== index) {
               this.coinDividerIndex = index;
               if (this.props.isCoinListEdited) {
@@ -279,10 +282,7 @@ class RecyclerAssetList extends Component {
                   this.checkEditStickyHeader(this.rlv.getCurrentScrollOffset());
               }
             }
-            if (
-              sections[balancesIndex].data[lastBalanceIndex - 2]
-                .smallBalancesContainer
-            ) {
+            if (sections[balancesIndex].data[index].smallBalancesContainer) {
               return {
                 height: ViewTypes.COIN_DIVIDER.calculateHeight(),
                 index: ViewTypes.COIN_DIVIDER.index,
@@ -291,41 +291,43 @@ class RecyclerAssetList extends Component {
               };
             }
           }
-          if (index === lastBalanceIndex - 1) {
-            if (
-              sections[balancesIndex].data[lastBalanceIndex - 2] &&
-              sections[balancesIndex].data[lastBalanceIndex - 2]
-                .smallBalancesContainer
-            ) {
-              smallBalancesIndex = index - 1;
-              return {
-                height: ViewTypes.COIN_SMALL_BALANCES.calculateHeight({
-                  isCoinListEdited: this.props.isCoinListEdited,
-                  isOpen: this.props.openSmallBalances,
-                  smallBalancesLength:
-                    sections[balancesIndex].data[smallBalancesIndex].assets
-                      .length,
-                }),
-                index: ViewTypes.COIN_SMALL_BALANCES.index,
-                visibleDuringCoinEdit:
-                  ViewTypes.COIN_SMALL_BALANCES.visibleDuringCoinEdit,
-              };
-            }
+          if (sections[balancesIndex].data[index - 1].smallBalancesContainer) {
+            smallBalancesIndex = index - 1;
+            return {
+              height: ViewTypes.COIN_SMALL_BALANCES.calculateHeight({
+                isCoinListEdited: this.props.isCoinListEdited,
+                isOpen: this.props.openSmallBalances,
+                smallBalancesLength:
+                  sections[balancesIndex].data[smallBalancesIndex].assets
+                    .length,
+              }),
+              index: ViewTypes.COIN_SMALL_BALANCES.index,
+              visibleDuringCoinEdit:
+                ViewTypes.COIN_SMALL_BALANCES.visibleDuringCoinEdit,
+            };
+          }
+          if (sections[balancesIndex].data[index - 1].savingsContainer) {
+            return {
+              height: ViewTypes.COIN_SAVINGS.calculateHeight({
+                amountOfRows:
+                  sections[balancesIndex].data[index - 1].assets.length,
+                isLast: index === lastBalanceIndex,
+                isOpen: this.props.openSavings,
+              }),
+              index: ViewTypes.COIN_SAVINGS.index,
+            };
+          }
+          if (sections[balancesIndex].data[index - 1].poolsContainer) {
+            return {
+              height: ViewTypes.COIN_POOLS.calculateHeight({
+                amountOfRows:
+                  sections[balancesIndex].data[index - 1].assets.length,
+                isOpen: this.props.openSavings,
+              }),
+              index: ViewTypes.COIN_POOLS.index,
+            };
           }
           if (index === lastBalanceIndex) {
-            if (
-              sections[balancesIndex].data[lastBalanceIndex - 1]
-                .savingsContainer
-            ) {
-              return {
-                height: ViewTypes.COIN_SAVINGS.calculateHeight({
-                  amountOfRows:
-                    sections[balancesIndex].data[index - 1].assets.length,
-                  isOpen: this.props.openSavings,
-                }),
-                index: ViewTypes.COIN_SAVINGS.index,
-              };
-            }
             this.lastAssetIndex = index;
           }
           const firstBalanceIndex = headersIndices[balancesIndex] + 1;
@@ -651,6 +653,10 @@ class RecyclerAssetList extends Component {
       return `savingsContainer`;
     }
 
+    if (row.item && row.item.poolsContainer) {
+      return `poolsContainer`;
+    }
+
     if (index === dataProvider._data.length - 1) {
       return 'footer';
     }
@@ -743,6 +749,10 @@ class RecyclerAssetList extends Component {
       });
     } else if (type.index === ViewTypes.COIN_SAVINGS.index) {
       return ViewTypes.COIN_SAVINGS.renderComponent({
+        data,
+      });
+    } else if (type.index === ViewTypes.COIN_POOLS.index) {
+      return ViewTypes.COIN_POOLS.renderComponent({
         data,
       });
     } else if (type.index === ViewTypes.UNISWAP_ROW.index) {

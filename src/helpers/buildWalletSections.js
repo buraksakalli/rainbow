@@ -258,6 +258,26 @@ const withBalanceSection = (
     balanceSectionData.push(savingsSection);
   }
 
+  const poolsSection = {
+    assets: [
+      {
+        cToken: [Object],
+        exchangeRate: '0.020641392023896746',
+        lifetimeSupplyInterestAccruedNative: 0,
+        supplyRate: '0.0300962826967968',
+        underlying: [Object],
+        underlyingBalanceNativeValue: 0,
+        underlyingPrice: '0.002825181358540338',
+      },
+    ],
+    poolsContainer: true,
+    totalValue: '0',
+  };
+
+  if (networkTypes.mainnet === network) {
+    balanceSectionData.push(poolsSection);
+  }
+
   if (isLoadingAssets) {
     balanceSectionData = [{ item: { uniqueId: 'skeleton0' } }];
   }
