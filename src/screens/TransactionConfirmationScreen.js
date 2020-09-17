@@ -1,11 +1,8 @@
-import { hexlify } from '@ethersproject/bytes';
-import { colors, position } from '@rainbow-me/styles';
 import { useRoute } from '@react-navigation/native';
 import analytics from '@segment/analytics-react-native';
 import BigNumber from 'bignumber.js';
 import lang from 'i18n-js';
 import { get, isEmpty, isNil, omit } from 'lodash';
-import logger from 'logger';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, InteractionManager, Vibration } from 'react-native';
 import { isEmulatorSync } from 'react-native-device-info';
@@ -20,7 +17,7 @@ import {
   MessageSigningSection,
   TransactionConfirmationSection,
 } from '../components/transaction';
-import { estimateGas, getTransactionCount, toHex } from '../handlers/web3';
+import { estimateGas, getTransactionCount } from '../handlers/web3';
 import {
   convertHexToString,
   fromWei,
@@ -47,6 +44,8 @@ import {
   SIGN,
   SIGN_TYPED_DATA,
 } from '../utils/signingMethods';
+import { colors, position } from '@rainbow-me/styles';
+import logger from 'logger';
 
 const CancelButtonContainer = styled.View`
   bottom: 19;
@@ -190,7 +189,7 @@ const TransactionConfirmationScreen = () => {
       const rawGasLimit = await estimateGas(txPayload);
       logger.log('Estimated gas limit', rawGasLimit);
       if (rawGasLimit) {
-        gas = toHex(rawGasLimit);
+        gas = rawGasLimit;
       }
     } catch (error) {
       logger.log('error estimating gas', error);
@@ -262,13 +261,13 @@ const TransactionConfirmationScreen = () => {
 
     const rawGasPrice = get(gasPrices, `${gasUtils.NORMAL}.value.amount`);
     if (rawGasPrice) {
-      gasPrice = toHex(rawGasPrice);
+      gasPrice = rawGasPrice;
     }
 
     if (isNil(gas) && isNil(gasLimitFromPayload)) {
       try {
         const rawGasLimit = await estimateGas(txPayload);
-        gas = toHex(rawGasLimit);
+        gas = rawGasLimit;
       } catch (error) {
         logger.log('error estimating gas', error);
       }
@@ -276,9 +275,7 @@ const TransactionConfirmationScreen = () => {
 
     const web3TxnCount = await getTransactionCount(txPayload.from);
     const maxTxnCount = Math.max(transactionCountNonce, web3TxnCount);
-    console.log('HI - about to hexlify maxTxnCount', maxTxnCount);
-    const nonce = hexlify(maxTxnCount);
-    console.log('HI - nonce', nonce);
+    const nonce = maxTxnCount;
     const calculatedGasLimit = gas || gasLimitFromPayload || gasLimit;
     let txPayloadLatestNonce = {
       ...txPayload,
